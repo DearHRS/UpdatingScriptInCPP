@@ -22,6 +22,10 @@ namespace Other {
 	enum threadBoolResult{notFinished, True, False};
 
 
+	//predefined programme stages
+	enum ProgrammeStage { stage00, stage01, stage02, stage15, stage20 , stageCloseWindow};  
+
+
 	//used to store contents for programmes to update
 	struct ProgrammesToUpdate{
 		std::wstring name;								//stores programme's name

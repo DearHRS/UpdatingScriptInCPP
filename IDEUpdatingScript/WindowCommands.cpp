@@ -25,13 +25,20 @@ void WindowCommands::GetSetCHCP(std::wstring& chcp, std::string encoding, Other:
 
 
 void WindowCommands::IsConnectedToNet(Other::threadBoolResult& hasConnected){
+	std::wcout << "Is Connected thread beginning\n";
 	std::vector<std::wstring> pingReport[2];															//stores ping reports from google and yandex
 	
+	
+	std::wcout << "launching google ping thread\n";
 	//starting threads to ping google and yandex
-	std::thread pingGoogleThread(system, "ping Google.com > ReadFromReports\\NetConnectionReport1.txt");
-	std::thread pingYandexThread(system, "ping Yandex.ru > ReadFromReports\\NetConnectionReport2.txt");
+	std::thread pingGoogleThread(system, "start cmd /c \"ping Google.com > ReadFromReports\\NetConnectionReport1.txt\"");
+	
+	std::wcout << "launching yandex ping thread\n";
+	std::thread pingYandexThread(system, "start cmd /c \"ping Yandex.ru > ReadFromReports\\NetConnectionReport2.txt\"");
+
 
 	//waiting until google and yandex threads have generated txt file
+	std::wcout << "lwaiting until google and yandex threads have generated txt file\n";
 	pingGoogleThread.join();
 	pingYandexThread.join();
 

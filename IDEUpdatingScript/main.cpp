@@ -33,7 +33,6 @@ To add:
 #include "GuiItems.h"
 
 
-
 int main(){
     //remove, only testing
     
@@ -48,7 +47,8 @@ int main(){
     static float screenHSize = 1000.0f;         //screen horizontal size
     static float screenVSize = 600.0f;          //screen vertical size
     sf::RenderWindow window(sf::VideoMode(screenHSize, screenVSize), "IDE Updating Script", sf::Style::Close);
-    
+
+
     /*
     parameters used by everyone
     */
@@ -66,7 +66,7 @@ int main(){
     */
     sf::RectangleShape background;
     sf::Texture backgroundTextureMainMenu;
-    backgroundTextureMainMenu.loadFromFile("Assets\\mainBackground.png");
+    backgroundTextureMainMenu.loadFromFile("Assets\\animations\\pngFiles\\mainBackground.png");
     background.setSize(sf::Vector2f(screenHSize, screenVSize));
     background.setTexture(&backgroundTextureMainMenu);
     background.setPosition(sf::Vector2f(0.0f, 0.0f));
@@ -79,8 +79,27 @@ int main(){
     GuiItems::LoadingAnimation loadingAnimation(&loadingSpritesheet, &font, L"testing", 12, sf::Vector2f(12.0f, 15.0f), sf::Vector2f(200.0f, 200.0f), sf::Vector2f((screenHSize)/2, (screenVSize) / 2), sf::Vector2u(10, 1), 0.1f);
 
 
-    enum ProgrammeStage {stage00, stage01, stage02, stage15, stage20};  //predefined programme stages
-    ProgrammeStage stage = stage00;                                                             //used for cycling through stages of programmes
+    /*
+    setting buttons
+    */
+    sf::Texture buttonSpriteSheet;
+    buttonSpriteSheet.loadFromFile("Assets\\animations\\pngFiles\\button.png");
+    GuiItems::Button closeButton(&buttonSpriteSheet, &font, L"close", 24, sf::Vector2f(23.0f, 15.0f), sf::Vector2f(200.0f, 80.0f), sf::Vector2f((screenHSize) / 2, (screenVSize) * 4 / 5), sf::Vector2u(1, 2), 0.1f);
+
+
+    /*
+    setting textboard
+    */
+    sf::Texture textBoardTexture;
+    textBoardTexture.loadFromFile("Assets\\animations\\pngFiles\\textBoard.png");
+    GuiItems::TextBoard textBoard(&textBoardTexture, &font);
+
+
+    /*
+    predefined programme stages
+    used for cycling through stages of programmes
+    */
+    Other::ProgrammeStage stage = Other::ProgrammeStage::stage00; 
 
 
     /*
@@ -149,10 +168,10 @@ int main(){
         initializer of stage 0
         launching thread to fetch data and going to main stage 0
         */
-        case stage00:
+        case Other::ProgrammeStage::stage00:
             chcpThread = std::thread(WindowCommands::GetSetCHCP, std::ref(chcp[0]), std::string(chcp[1].begin(), chcp[1].end()), std::ref(chcpThreadResult));          //assigning task for chcpThread
 
-            stage = stage01;
+            stage = Other::ProgrammeStage::stage01;
             break;
 
         /*
@@ -162,23 +181,35 @@ int main(){
             if true:
                 begin checking netconnection
         */
-        case stage01:
+        case Other::ProgrammeStage::stage01:
             switch (chcpThreadResult){
+            //running this segment of code while chcp is still doing its thing
             case Other::threadBoolResult::notFinished:
                 if (workHorseResult == Other::threadBoolResult::True) {
                     workHorseResult = Other::threadBoolResult::notFinished;
+                    std::wcout << L"beginning to start check net thread\n";
                     workHorse = std::thread(WindowCommands::IsConnectedToNet, std::ref(workHorseResult));
-                    stage = stage02;
+                    std::wcout << L"check net thread launched\n";
+
+                    stage = Other::ProgrammeStage::stage02;
                 }
+
+                //if no admin privileges
                 else if (workHorseResult == Other::threadBoolResult::False) {
+                    //clearing screen from loading animation
                     window.draw(background);
 
-                    /*
-                    exit button and asking user to restart programme with admin privledges
-                    */
+                    //displaying textboard
+                    textBoard.SetText(L"You need administrative privleges to run this programme, \nrelaunch the programme with administrative privleges!", 24, sf::Vector2f(255.0f, 85.0f), sf::Vector2f((screenHSize) / 2, (screenVSize) * 3 / 6), sf::Vector2f(800.0f, 500.0f));
+                    textBoard.Draw(window);
+
+                    //displaying button
+                    closeButton.Update(deltaTime, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
+                    closeButton.Draw(window);
                 }
                 break;
 
+            //running this segment of code when chcp is still done
             case Other::threadBoolResult::True:
                 workHorse = std::thread(WindowCommands::HasAdminPrivileges, std::ref(workHorseResult));
                 chcpThreadResult = Other::threadBoolResult::notFinished;
@@ -186,7 +217,7 @@ int main(){
 
             case Other::False:
                 /*
-                impossible state
+                illegal state
                 */
                 break;
             }
@@ -194,33 +225,45 @@ int main(){
 
 
         //resolving net connection issues and begin checking if winget has msstore accepted
-        case stage02:
+        case Other::ProgrammeStage::stage02:
             if (workHorseResult == Other::threadBoolResult::True) {
-                stage = stage15;
+                stage = Other::ProgrammeStage::stage15;
             }
+            //if no net connection
             else {
-                /*
-                telling user to connect to internet and restart application with admin privileges
-                */
+                //clearing screen from loading animation
+                window.draw(background);
+
+                //displaying textboard
+                textBoard.SetText(L"You are not connected to internet \nrelaunch the programme with internet connection!", 24, sf::Vector2f(255.0f, 85.0f), sf::Vector2f((screenHSize) / 2, (screenVSize) * 3 / 6), sf::Vector2f(800.0f, 500.0f));
+                textBoard.Draw(window);
+
+                //displaying button
+                closeButton.Update(deltaTime, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
+                closeButton.Draw(window);
             }
 
             break;
 
-        case stage15:
+        case Other::ProgrammeStage::stage15:
             break;
 
 
         //initializer of stage 2
-        case stage20:
+        case Other::ProgrammeStage::stage20:
             
             break;
 
 
         default:
             break;
+        
+        case Other::ProgrammeStage::stageCloseWindow:
+            window.close();
+            break;
         }
 
-
+        
         window.display();
     }
 
