@@ -1,0 +1,5 @@
+   -\|/-\|/- Failed in attempting to update the source: winget
+   -\|/ Failed when searching source: msstore
+An unexpected error occurred while executing the command: 
+WinHttpSendRequest: 12007: Не удается разрешить имя или адрес сервера
+

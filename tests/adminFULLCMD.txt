@@ -1,0 +1,134 @@
+Microsoft Windows [Version 10.0.19045.2965]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+C:\WINDOWS\system32>cd /d D:\Dummy folder\college\semester4.second\#Thesis\tests
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start cmd.exe /c winget upgrade > "resettedWinget.txt"
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start cmd.exe /c winget upgrade & > "resettedWinget.txt"
+Ошибка в синтаксисе команды.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start cmd.exe /c winget upgrade >& "resettedWinget.txt"
+Непредвиденное появление: >&.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start cmd.exe /c winget upgrade &> "resettedWinget.txt"
+Ошибка в синтаксисе команды.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start cmd.exe /c winget upgrade |> "resettedWinget.txt"
+Ошибка в синтаксисе команды.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start cmd.exe /k winget upgrade > "resettedWinget.txt"
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start cmd.exe /c "winget upgrade > "resettedWinget.txt""
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>start "toBeKilledByIDEUpdatingScript" cmd.exe /c "winget upgrade > "resettedWinget.txt""
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade
+Failed when searching source; results will not be included: msstore
+Name                                     Id                               Version  Available Source
+---------------------------------------------------------------------------------------------------
+Discord                                  Discord.Discord                  1.0.9003 1.0.9013  winget
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1    winget
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1    winget
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9     winget
+4 upgrades available.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -s winget
+Name                                     Id                               Version  Available
+--------------------------------------------------------------------------------------------
+Discord                                  Discord.Discord                  1.0.9003 1.0.9013
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9
+4 upgrades available.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade
+The `msstore` source requires that you view the following agreements before using.
+Terms of Transaction: https://aka.ms/microsoft-store-terms-of-transaction
+The source requires the current machine's 2-letter geographic region to be sent to the backend service to function properly (ex. "US").
+
+Do you agree to all the source agreements terms?
+[Y] Yes  [N] No: n
+One or more of the source agreements were not agreed to. Operation cancelled. Please accept the source agreements or remove the corresponding sources.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -s winget Discord.Discord
+Found Discord [Discord.Discord] Version 1.0.9013
+This application is licensed to you by its owner.
+Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+Downloading https://dl.discordapp.net/distro/app/stable/win/x86/1.0.9013/DiscordSetup.exe
+  ██████████████████████████████  91.0 MB / 91.0 MB
+Successfully verified installer hash
+Starting package install...
+Successfully installed
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -s winget -h JetBrains.IntelliJIDEA.Community
+No applicable upgrade found.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>tasklist /v | find "Discord"
+Discord.exe                  11148 Console                    1    86 908 КБ Running         LAPTOP-A8JC5BIE\DearHRS                                 0:00:08 Discord    
+Discord.exe                   8980 Console                    1    27 264 КБ Running         LAPTOP-A8JC5BIE\DearHRS                                 0:00:00 Н/Д        
+Discord.exe                  11592 Console                    1    76 500 КБ Running         LAPTOP-A8JC5BIE\DearHRS                                 0:00:04 Н/Д        
+Discord.exe                  10816 Console                    1    46 008 КБ Running         LAPTOP-A8JC5BIE\DearHRS                                 0:00:01 OleMainThreadWndName
+Discord.exe                  11256 Console                    1    71 716 КБ Unknown         LAPTOP-A8JC5BIE\DearHRS                                 0:00:05 Н/Д        
+Discord.exe                   8440 Console                    1   175 424 КБ Running         LAPTOP-A8JC5BIE\DearHRS                                 0:00:05 Н/Д        
+Discord.exe                  11820 Console                    1    64 192 КБ Unknown         LAPTOP-A8JC5BIE\DearHRS                                 0:00:00 Н/Д        
+Discord.exe                  10896 Console                    1    63 388 КБ Unknown         LAPTOP-A8JC5BIE\DearHRS                                 0:00:00 Н/Д        
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -s winget
+Name                                     Id                               Version  Available
+--------------------------------------------------------------------------------------------
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9
+3 upgrades available.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -h -s winget JetBrains.IntelliJIDEA.Community
+No applicable upgrade found.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -s winget JetBrains.IntelliJIDEA.Community
+No applicable upgrade found.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -s winget --id JetBrains.IntelliJIDEA.Community
+No applicable upgrade found.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -h -s winget Python.Python.3.7
+No applicable upgrade found.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget upgrade -h -s winget JetBrains.IntelliJIDEA.Community -v 2022.2.3
+No applicable upgrade found.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>winget uninstall -h JetBrains.IntelliJIDEA.Community -v 2023.1
+The `msstore` source requires that you view the following agreements before using.
+Terms of Transaction: https://aka.ms/microsoft-store-terms-of-transaction
+The source requires the current machine's 2-letter geographic region to be sent to the backend service to function properly (ex. "US").
+
+Do you agree to all the source agreements terms?
+[Y] Yes  [N] No: n
+One or more of the source agreements were not agreed to. Operation cancelled. Please accept the source agreements or remove the corresponding sources.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>tasklist /v | find "resettedWinget"
+notepad.exe                  10168 Console                    1     2 032 КБ Running         LAPTOP-A8JC5BIE\DearHRS                                 0:00:00 resettedWinget.txt - Блокнот
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>taskkill /pid 10168
+Успех: Отправлен сигнал завершения процессу с идентификатором 10168.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>net session
+В списке нет элементов.
+
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>chchp 65001
+"chchp" не является внутренней или внешней
+командой, исполняемой программой или пакетным файлом.
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>chcp 65001
+Active code page: 65001
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>net session
+There are no entries in the list.
+
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>tasklist /v | find "resettedWinget"
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>net session > "adminNetSession.txt"
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>

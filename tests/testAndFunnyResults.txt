@@ -1,0 +1,306 @@
+Microsoft Windows [Version 10.0.19045.2965]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+C:\WINDOWS\system32>winget upgrade
+Name                                     Id                               Version  Available Source
+---------------------------------------------------------------------------------------------------
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1    winget
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1    winget
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9     winget
+3 upgrades available.
+
+C:\WINDOWS\system32>winget upgrade JetBrains.IntelliJIDEA.Community -h
+Found IntelliJ IDEA Community Edition [JetBrains.IntelliJIDEA.Community] Version 2023.1
+This application is licensed to you by its owner.
+Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+Successfully verified installer hash
+Starting package uninstall...
+Successfully uninstalled
+Starting package install...
+Successfully installed
+
+C:\WINDOWS\system32>winget upgrade
+Name                  Id                    Version Available Source
+--------------------------------------------------------------------
+PostgreSQL 15         PostgreSQL.PostgreSQL 15      15.3.1    winget
+Python 3.7.8 (32-bit) Python.Python.3.7     3.7.8   3.7.9     winget
+2 upgrades available.
+
+C:\WINDOWS\system32>winget upgrade
+Name                                     Id                               Version  Available Source
+---------------------------------------------------------------------------------------------------
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1    winget
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1    winget
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9     winget
+3 upgrades available.
+
+C:\WINDOWS\system32>winget -?
+Windows Package Manager v1.4.10173
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+The winget command line utility enables installing applications and other packages from the command line.
+
+usage: winget  [<command>] [<options>]
+
+The following commands are available:
+  install    Installs the given package
+  show       Shows information about a package
+  source     Manage sources of packages
+  search     Find and show basic info of packages
+  list       Display installed packages
+  upgrade    Shows and performs available upgrades
+  uninstall  Uninstalls the given package
+  hash       Helper to hash installer files
+  validate   Validates a manifest file
+  settings   Open settings or set administrator settings
+  features   Shows the status of experimental features
+  export     Exports a list of the installed packages
+  import     Installs all the packages in a file
+
+For more details on a specific command, pass it the help argument. [-?]
+
+The following options are available:
+  -v,--version              Display the version of the tool
+  --info                    Display general info of the tool
+  -?,--help                 Shows help about the selected command
+  --wait                    Prompts the user to press any key before exiting
+  --verbose,--verbose-logs  Enables verbose logging for WinGet
+  --disable-interactivity   Disable interactive prompts
+
+More help can be found at: https://aka.ms/winget-command-help
+
+C:\WINDOWS\system32>winget install -?
+Windows Package Manager v1.4.10173
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Installs the selected package, either found by searching a configured source or directly from a manifest. By default, the query must case-insensitively match the id, name, or moniker of the package. Other fields can be used by passing their appropriate option. By default, install command will check package installed status and try to perform an upgrade if applicable. Override with --force to perform a direct install.
+
+usage: winget  install [[-q] <query>] [<options>]
+
+The following command aliases are available:
+  add
+
+The following arguments are available:
+  -q,--query                           The query used to search for a package
+
+The following options are available:
+  -m,--manifest                        The path to the manifest of the package
+  --id                                 Filter results by id
+  --name                               Filter results by name
+  --moniker                            Filter results by moniker
+  -v,--version                         Use the specified version; default is the latest version
+  -s,--source                          Find package using the specified source
+  --scope                              Select install scope (user or machine)
+  -a,--architecture                    Select the architecture to install
+  -e,--exact                           Find package using exact match
+  -i,--interactive                     Request interactive installation; user input may be needed
+  -h,--silent                          Request silent installation
+  --locale                             Locale to use (BCP47 format)
+  -o,--log                             Log location (if supported)
+  --override                           Override arguments to be passed on to the installer
+  -l,--location                        Location to install to (if supported)
+  --ignore-security-hash               Ignore the installer hash check failure
+  --ignore-local-archive-malware-scan  Ignore the malware scan performed as part of installing an archive type package from local manifest
+  --dependency-source                  Find package dependencies using the specified source
+  --accept-package-agreements          Accept all license agreements for packages
+  --no-upgrade                         Skips upgrade if an installed version already exists
+  --header                             Optional Windows-Package-Manager REST source HTTP header
+  --accept-source-agreements           Accept all source agreements during source operations
+  -r,--rename                          The value to rename the executable file (portable)
+  --force                              Direct run the command and continue with non security related issues
+  -?,--help                            Shows help about the selected command
+  --wait                               Prompts the user to press any key before exiting
+  --verbose,--verbose-logs             Enables verbose logging for WinGet
+  --disable-interactivity              Disable interactive prompts
+
+More help can be found at: https://aka.ms/winget-command-install
+
+C:\WINDOWS\system32>winget upgrade
+Name                                     Id                               Version  Available Source
+---------------------------------------------------------------------------------------------------
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1    winget
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1    winget
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9     winget
+3 upgrades available.
+
+C:\WINDOWS\system32>winget uninstall JetBrains.IntelliJIDEA.Community -h
+Found IntelliJ IDEA Community Edition [JetBrains.IntelliJIDEA.Community]
+Starting package uninstall...
+Successfully uninstalled
+
+C:\WINDOWS\system32>winget install JetBrains.IntelliJIDEA.Community -h
+Found an existing package already installed. Trying to upgrade the installed package...
+Found IntelliJ IDEA Community Edition [JetBrains.IntelliJIDEA.Community] Version 2023.1
+This application is licensed to you by its owner.
+Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+Downloading https://download.jetbrains.com.cn/idea/ideaIC-2023.1.exe
+  ██████████████████████████████   632 MB /  632 MB
+Successfully verified installer hash
+Starting package uninstall...
+Successfully uninstalled
+Starting package install...
+Successfully installed
+
+C:\WINDOWS\system32>winget upgrade
+Name                                     Id                               Version  Available Source
+---------------------------------------------------------------------------------------------------
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1    winget
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1    winget
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9     winget
+3 upgrades available.
+
+C:\WINDOWS\system32>winget list
+Name                                     Id                                       Version             Available Source
+-----------------------------------------------------------------------------------------------------------------------
+Clipboard                                11361JustinChase.Clipboard_aahkhnxzpwnc4 1.6.0.18
+HP PC Hardware Diagnostics Windows       AD2F1837.HPPCHardwareDiagnosticsWindows… 2.2.0.0
+HP Smart                                 AD2F1837.HPPrinterControl_v10z8vjag6ke6  145.3.1086.0
+HP Privacy Settings                      AD2F1837.HPPrivacySettings_v10z8vjag6ke6 1.2.74.0
+HP Support Assistant                     AD2F1837.HPSupportAssistant_v10z8vjag6k… 9.25.18.0
+HP System Event Utility                  AD2F1837.HPSystemEventUtility_v10z8vjag… 1.3.20.0
+AMD Software                             AMD Catalyst Install Manager             19.10.08.01
+Adobe AIR                                Adobe AIR                                32.0.0.125
+Adobe Photoshop CS4                      Adobe Photoshop CS4_is1                  11.0
+Discord                                  XPDC2RH70K22MN                           1.0.9003                      msstore
+HP Photo Creations                       HP Photo Creations                       1.0.0.7702
+HP Documentation                         HP_Documentation                         1.0.0.1
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community         2022.2.3            2023.1    winget
+IntelliJ IDEA Community Edition 2023.1   JetBrains.IntelliJIDEA.Community         2023.1                        winget
+GDR 2080 для SQL Server 2019 (KB4583458… KB4583458                                15.0.2080.9
+Microsoft Edge                           XPFFTQ037JWMHS                           113.0.1774.50                 msstore
+Microsoft Edge Update                    Microsoft Edge Update                    1.3.175.27
+Среда выполнения Microsoft Edge WebView… Microsoft EdgeWebView                    113.0.1774.50
+Microsoft Help Viewer 1.0                Microsoft Help Viewer 1.0                1.0.30319
+Cortana                                  Microsoft.549981C3F5F10_8wekyb3d8bbwe    4.2204.13303.0
+App Installer                            Microsoft.DesktopAppInstaller_8wekyb3d8… 1.19.10173.0
+Get Help                                 Microsoft.GetHelp_8wekyb3d8bbwe          10.2303.10961.0
+Microsoft Tips                           Microsoft.Getstarted_8wekyb3d8bbwe       10.2303.3.0
+HEIF Image Extensions                    Microsoft.HEIFImageExtension_8wekyb3d8b… 1.0.61171.0
+Пакет локализованного интерфейса на рус… Microsoft.LanguageExperiencePackru-RU_8… 19041.59.185.0
+3D Viewer                                Microsoft.Microsoft3DViewer_8wekyb3d8bb… 7.2211.24012.0
+Microsoft Edge                           Microsoft.MicrosoftEdge.Stable_8wekyb3d… 113.0.1774.50
+Microsoft Sticky Notes                   Microsoft.MicrosoftStickyNotes_8wekyb3d… 4.6.0.0
+Mixed Reality Portal                     Microsoft.MixedReality.Portal_8wekyb3d8… 2000.21051.1282.0
+OneNote for Windows 10                   Microsoft.Office.OneNote_8wekyb3d8bbwe   16001.14326.21386.0
+Microsoft People                         Microsoft.People_8wekyb3d8bbwe           10.2202.30.0
+Print 3D                                 Microsoft.Print3D_8wekyb3d8bbwe          3.3.791.0
+Snip & Sketch                            Microsoft.ScreenSketch_8wekyb3d8bbwe     10.2008.3001.0
+Store Experience Host                    Microsoft.StorePurchaseApp_8wekyb3d8bbwe 12301.1401.8.0
+VP9 Video Extensions                     Microsoft.VP9VideoExtensions_8wekyb3d8b… 1.0.52781.0
+Microsoft Pay                            Microsoft.Wallet_8wekyb3d8bbwe           2.4.18324.0
+Web Media Extensions                     Microsoft.WebMediaExtensions_8wekyb3d8b… 1.0.42192.0
+Webp Image Extensions                    Microsoft.WebpImageExtension_8wekyb3d8b… 1.0.52351.0
+Microsoft Photos                         Microsoft.Windows.Photos_8wekyb3d8bbwe   2023.10030.27002.0
+Windows Clock                            Microsoft.WindowsAlarms_8wekyb3d8bbwe    11.2302.5.0
+Windows Calculator                       Microsoft.WindowsCalculator_8wekyb3d8bb… 11.2210.0.0
+Windows Camera                           Microsoft.WindowsCamera_8wekyb3d8bbwe    2023.2302.14.0
+Feedback Hub                             Microsoft.WindowsFeedbackHub_8wekyb3d8b… 1.2304.1243.0
+Windows Maps                             Microsoft.WindowsMaps_8wekyb3d8bbwe      11.2303.5.0
+Windows Voice Recorder                   Microsoft.WindowsSoundRecorder_8wekyb3d… 10.2103.28.0
+Microsoft Store                          Microsoft.WindowsStore_8wekyb3d8bbwe     22303.1401.7.0
+Windows Package Manager Source (winget)  Microsoft.Winget.Source_8wekyb3d8bbwe    2023.525.437.702
+Xbox TCUI                                Microsoft.Xbox.TCUI_8wekyb3d8bbwe        1.24.10001.0
+Xbox Console Companion                   Microsoft.XboxApp_8wekyb3d8bbwe          48.89.25001.0
+Xbox Game Bar Plugin                     Microsoft.XboxGameOverlay_8wekyb3d8bbwe  1.54.4001.0
+Xbox Game Bar                            Microsoft.XboxGamingOverlay_8wekyb3d8bb… 5.823.3261.0
+Xbox Identity Provider                   Microsoft.XboxIdentityProvider_8wekyb3d… 12.95.3001.0
+Xbox Game Speech Window                  Microsoft.XboxSpeechToTextOverlay_8weky… 1.21.13002.0
+Phone Link                               Microsoft.YourPhone_8wekyb3d8bbwe        1.23032.196.0
+Movies & TV                              Microsoft.ZuneVideo_8wekyb3d8bbwe        10.22091.10041.0
+OBS Studio                               OBSProject.OBSStudio                     29.1.1                        winget
+Microsoft Office Профессиональный 2007   PRO                                      12.0.6612.1000
+PostgreSQL 15                            PostgreSQL.PostgreSQL                    15                  15.3.1    winget
+Steam                                    Valve.Steam                              2.10.91.91                    winget
+TrackMania Nations Forever               Steam App 11020                          Unknown
+Trackmania                               Steam App 2225070                        Unknown
+World of Tanks Blitz                     Steam App 444200                         Unknown
+Synaptics TouchPad                       SynapticsIncorporated.SynHPConsumerDApp… 19005.35054.0.0
+Unity 2021.3.18f1                        Unity.Unity.2020                         2021.3.18f1                   winget
+Unity Hub 3.4.2                          Unity.UnityHub                           3.4.2                         winget
+VLC media player                         VideoLAN.VLC                             > 3.0.17.4                    winget
+AMD Radeon Settings                      WUCCCApp                                 2019.0504.1012.183…
+WinRAR 6.21 (64-разрядная)               RARLab.WinRAR                            6.21.0                        winget
+Visual Studio Community 2019             c0f2cdfa                                 16.11.26
+Mem Reduct                               Henry++.MemReduct                        3.4                           winget
+Mail and Calendar                        microsoft.windowscommunicationsapps_8we… 16005.14326.21434.0
+μTorrent                                 uTorrent                                 3.5.5.45966
+Microsoft Visual C++ 2013 Redistributab… Microsoft.VCRedist.2013.x64              12.0.40664.0                  winget
+Microsoft Windows Desktop Runtime - 5.0… Microsoft.DotNet.DesktopRuntime.5        5.0.17                        winget
+OEM Application Profile                  {12C2AEB0-ED60-4CCF-DD83-C65BC7CCFB50}   1.00.0000
+Windows SDK AddOn                        {15941C7F-810D-41DF-8C5A-8D0490277AFB}   10.1.0.0
+Проверка работоспособности ПК Windows    {16A15A77-242A-412C-86EF-C4D58BD80ED0}   3.6.2204.08001
+Python Launcher                          {1A8286E4-2F70-4165-B2BF-CC6B49664005}   3.9.7806.0
+HP Audio Switch                          {20A40E7C-E470-4E9F-9B5C-DDB2C205E856}   1.0.154.0
+Java 8 Update 51 (64-bit)                {26A24AE4-039D-4CA4-87B4-2F86418051F0}   8.0.510
+Python 3.7.8 (32-bit)                    Python.Python.3.7                        3.7.8               3.7.9     winget
+Microsoft Visual C++ 2015-2022 Redistri… Microsoft.VCRedist.2015+.x86             14.36.32532.0                 winget
+Microsoft Visual C++ 2008 Redistributab… {4B6C7001-C7D6-3710-913E-5BC23FCE91E6}   9.0.30729.4148
+Realtek Card Reader                      {5BC2B5AB-80DE-4E83-B8CF-426902051D0A}   10.0.17763.31246
+Microsoft Visual C++ 2008 Redistributab… Microsoft.VCRedist.2008.x64              9.0.30729.6161                winget
+HP Connection Optimizer                  {6468C4A5-E47E-405F-B675-A70A70983EA6}   2.0.15.0
+Microsoft Visual Studio Installer        {6F320B93-EE3C-4826-85E0-ADF79F8D4C61}   3.5.2150.18781
+paint.net                                dotPDNLLC.paintdotnet                    5.0.5                         winget
+Microsoft System CLR Types for SQL Serv… {725CC962-98BD-42C7-87D8-51C680FB1779}   15.0.1200.24
+Realtek Ethernet Controller Driver       {8833FFB6-5B0C-4764-81AA-06DFEED9A476}   10.32.1206.2018
+Microsoft System CLR Types for SQL Serv… {8D7CE3B0-5379-46FE-9F4B-A65D9F4CC1F1}   15.0.1200.24
+Microsoft Visual C++ 2015-2022 Redistri… Microsoft.VCRedist.2015+.x64             14.36.32532.0                 winget
+Update for Microsoft Office 2007 suites… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Ex… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Co… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Co… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Ou… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Wo… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Microsoft Office 2007 Service Pack 3 (S… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Update for Microsoft Office 2007 suites… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Ac… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Vi… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Po… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Update for Microsoft Office Outlook 200… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office In… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Update for Microsoft Office Publisher 2… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Update for Microsoft Office 2007 suites… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Update for 2007 Microsoft Office System… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Update for Microsoft Office 2007 suites… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Update for Microsoft Office 2007 suites… {90120000-0014-0000-0000-0000000FF1CE}_… Unknown
+Microsoft Office Excel 2007 Help Обновл… {90120000-0016-0419-0000-0000000FF1CE}_… Unknown
+Microsoft Office Powerpoint 2007 Help О… {90120000-0018-0419-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office Ou… {90120000-001A-0419-0000-0000000FF1CE}_… Unknown
+Microsoft Office Outlook 2007 Help Обно… {90120000-001A-0419-0000-0000000FF1CE}_… Unknown
+Microsoft Office Word 2007 Help Обновле… {90120000-001B-0419-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-002A-0000-1000-0000000FF1CE}_… Unknown
+Update for Microsoft Office 2007 suites… {90120000-006E-0419-0000-0000000FF1CE}_… Unknown
+Security Update for Microsoft Office 20… {90120000-006E-0419-0000-0000000FF1CE}_… Unknown
+Update for Microsoft Office 2007 suites… {90120000-006E-0419-0000-0000000FF1CE}_… Unknown
+HPDiagnosticCoreDll                      {9262B08F-E183-4FED-A2BD-23FF1A84EB79}   1.0.15.0
+Microsoft .NET Framework 4.8.1 Targetin… {94DDB521-CDD4-4A83-BBE0-D3C856FE9420}   4.8.09032
+Python 3.7.9 (64-bit)                    Python.Python.3.7                        3.7.9                         winget
+Microsoft Visual C++ 2013 Redistributab… Microsoft.VCRedist.2013.x86              12.0.40664.0                  winget
+Python 3.9.13 (32-bit)                   {9e6d90a2-242c-4dc0-8f2a-1b967274134f}   3.9.13150.0
+Microsoft Update Health Tools            {BB052C53-34CB-42DE-AF41-66FDFCEEC868}   3.72.0.0
+Microsoft .NET Framework 4.8.1 SDK       {BD4C49AC-2A45-48B0-B3F7-0C6043987AD0}   4.8.09032
+Update for Windows 10 for x64-based Sys… {C22F49B1-0F67-47DC-A490-E8B4B6558EA9}   8.91.0.0
+Update for  (KB2504637)                  {CFEF48A8-BFB8-3EAC-8BA5-DE4F8AA267CE}.… 1
+Microsoft Visual C++ 2010  x64 Redistri… {DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}   10.0.30319
+Microsoft .NET SDK 5.0.416 (x64) from V… {E5AE74BC-BDBB-4C18-B61E-592A09F36A5D}   5.4.1622.58022
+Realtek High Definition Audio Driver     {F132AF7F-7BCA-4EDE-8A7C-958108FE7DBC}   6.0.8940.1
+Windows Software Development Kit - Wind… Microsoft.WindowsSDK                     10.0.22621.2                  winget
+Python 3.9.13 (64-bit)                   Python.Python.3.9                        3.9.13                        winget
+
+C:\WINDOWS\system32>

@@ -1,0 +1,33 @@
+Microsoft Windows [Version 10.0.19045.2965]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+C:\Users\dearh>net session
+Системная ошибка 5.
+
+Отказано в доступе.
+
+
+C:\Users\dearh>echo you are administrator
+you are administrator
+
+C:\Users\dearh>chcp
+Текущая кодовая страница: 866
+
+C:\Users\dearh>chcp 65001
+Active code page: 65001
+
+C:\Users\dearh>net session
+System error 5 has occurred.
+
+Access is denied.
+
+
+C:\Users\dearh>cd /d D:\Dummy folder\college\semester4.second\#Thesis\tests
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>net session > "adminLessNetSession.txt"
+System error 5 has occurred.
+
+Access is denied.
+
+
+D:\Dummy folder\college\semester4.second\#Thesis\tests>
