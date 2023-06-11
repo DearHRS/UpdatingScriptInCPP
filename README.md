@@ -21,16 +21,17 @@ checks if user has launched script with administrator
 
 checks if internet exist
 
+check if msstore source is available in winget
 
+checks which programmes need updating
 
 
 
 not implement yet:
 
-check if msstore source is available in winget
-
-checks which programmes need updating
-
 updating programmes
 
-killing guis launched by programmes being updating (to automate, this programme is later updated in manual mode)
+--killing guis launched by programmes being updating (to automate, this programme is later updated in manual mode) (may not be implemented)
+
+
+
