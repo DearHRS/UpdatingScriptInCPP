@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <chrono>
 #include <thread>
 #include "Other.h"
 
@@ -48,7 +49,7 @@ public:
 	static void GetSetCHCP(std::wstring& chcp, std::string encoding, Other::threadBoolResult& hasFinished);
 
 
-	/*testing required
+	/*
 	pings google.com and yandex.ru to check if any of them reply
 
 	if they do then user has connection and true is returned
@@ -56,12 +57,21 @@ public:
 	otherwise returns false
 	*/
 	static void IsConnectedToNet(Other::threadBoolResult& hasConnected);
+
+
+	/*
+	checks if msstore source is allowed on winget
+	*/
+	static void IsSourcemsstoreAllowed(Other::threadBoolResult& isAllowed);
 	
 
 	/*testing required
 	uses winget tool to get programmes and ids to update
+	updates give Other::threadBoolResult& parameter to 
+	True if found programmes to update
+	otherwise False
 	*/
-	static void GenerateUpdateReport();
+	static void GenerateUpdateReport(std::vector<Other::ProgrammesToUpdate>& updateList, Other::threadBoolResult& hasFinished);
 
 	/*testing required
 	updates programme using winget
@@ -69,7 +79,15 @@ public:
 	static void UpdateProgramme(std::string id);
 
 
-	/*testing required
+	/*
+	attempts to find process id for given name of process
+	returns true if found
+	else false
+	*/
+	static bool FindProcess(std::string processName, std::string& processID);
+
+
+	/*
 	terminates process based of their id
 	*/
 	static void TerminateProcess(std::string processID);
@@ -79,7 +97,7 @@ public:
 	checks if you got admin priviledges or not, return true if True
 	else False
 	*/
-	static void HasAdminPrivileges(Other::threadBoolResult& hasPrivleges);
+	static void HasAdminPrivileges(Other::threadBoolResult& hasPrivileges);
 
 
 	/*testing required

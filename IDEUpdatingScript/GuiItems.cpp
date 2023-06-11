@@ -35,7 +35,12 @@ void GuiItems::LoadingAnimation::Update(float deltaTime) {
 }
 
 
-void GuiItems::LoadingAnimation::SetText(std::wstring text){
+void GuiItems::LoadingAnimation::SetText(std::wstring text, unsigned int textSize, sf::Vector2f textPosition, sf::Vector2f textOffSet) {
+	/*
+	setting text's position, size and text
+	*/
+	this->text.setPosition(textPosition.x - textOffSet.x, textPosition.y - textOffSet.y);
+	this->text.setCharacterSize(textSize);
 	this->text.setString(text);
 }
 

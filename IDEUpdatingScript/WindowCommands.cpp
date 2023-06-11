@@ -3,6 +3,7 @@
 
 void WindowCommands::GetCHCP(std::wstring& chcp, Other::threadBoolResult& hasFinished){
 	system("chcp>ReadFromReports\\chcpData.txt");				//generating txt file for Other::Funx::GetCHCP() to fetch data from
+	std::this_thread::sleep_for(std::chrono::seconds(1));			//giving 1second for command to generate data
 
 	chcp = Other::Funx::GetCHCP();										//using Other::Funx::GetCHCP() to fetch result
 	hasFinished = Other::threadBoolResult::True;
@@ -25,65 +26,95 @@ void WindowCommands::GetSetCHCP(std::wstring& chcp, std::string encoding, Other:
 
 
 void WindowCommands::IsConnectedToNet(Other::threadBoolResult& hasConnected){
-	std::wcout << "Is Connected thread beginning\n";
 	std::vector<std::wstring> pingReport[2];															//stores ping reports from google and yandex
 	
-	
-	std::wcout << "launching google ping thread\n";
-	//starting threads to ping google and yandex
-	std::thread pingGoogleThread(system, "start cmd /c \"ping Google.com > ReadFromReports\\NetConnectionReport1.txt\"");
-	
-	std::wcout << "launching yandex ping thread\n";
-	std::thread pingYandexThread(system, "start cmd /c \"ping Yandex.ru > ReadFromReports\\NetConnectionReport2.txt\"");
-
-
-	//waiting until google and yandex threads have generated txt file
-	std::wcout << "lwaiting until google and yandex threads have generated txt file\n";
-	pingGoogleThread.join();
-	pingYandexThread.join();
+	//pinging google and yandex
+	system("ping Google.com > ReadFromReports\\NetConnectionReport1.txt & start /min cmd /c \"chcp 65001 && ping Yandex.ru > ReadFromReports\\NetConnectionReport2.txt\"");
+	std::this_thread::sleep_for(std::chrono::seconds(4));		//waiting untill ping stopped
 
 	//getting generated file contents from previous threads
 	for (unsigned int i = 0; i < 2; i++) {
-		Other::Funx::GetTextFileContents(L"NetConnectionReport" + std::to_wstring(i + 1) + L".txt", pingReport[i]);
+		Other::Funx::GetTextFileContents(L"NetConnectionReport" + std::to_wstring(i + 1), pingReport[i]);
 	}
-	
-	//checking if pingReport value generated properly
-	if (Other::Funx::IsNumeric(L"" + pingReport[0][8][44]) && Other::Funx::IsNumeric(L"" + pingReport[1][8][44])) {
-		//if packet loss was not 4 from google or yandex then returns true, if both google and yanndex packet loss was 4 then returns false
-		if ((std::stoi(L"" + pingReport[0][8][44]) != 4) || (std::stoi(L"" + pingReport[1][8][44]) != 4)) {
-			hasConnected = Other::threadBoolResult::True;
-		}
-		else {
-			hasConnected = Other::threadBoolResult::False;
-		}
-	}
-	//if report failed then not connected
-	else {
-		std::wcout << "failed to read\n";
+
+	//if not connected to net
+	if (pingReport[0].size() == 2 || pingReport[1].size() == 2 || pingReport[0].size() == 1 || pingReport[1].size() == 1) {
 		hasConnected = Other::threadBoolResult::False;
+	}
+	else {
+		std::wstring potentialNumericValue[2] = { L"", L"" };
+		potentialNumericValue[0] += pingReport[0][8][44];
+		potentialNumericValue[1] += pingReport[1][8][44];
+
+		if (Other::Funx::IsNumeric(potentialNumericValue[0]) && Other::Funx::IsNumeric(potentialNumericValue[1])) {
+
+			//if packet loss was not 4 from google or yandex then returns true
+			if ((std::stoi(potentialNumericValue[0]) != 4) || (std::stoi(potentialNumericValue[1]) != 4)) {
+				hasConnected = Other::threadBoolResult::True;
+			}
+			//if both google and yanndex packet loss was 4 then returns false
+			else {
+				hasConnected = Other::threadBoolResult::False;
+			}
+		}
 	}
 }
 
 
-void WindowCommands::GenerateUpdateReport(){
-	system("winget upgrade > ReadFromReports\\updateReport.txt");																//using winget to get report and windows to put that report in txt file
+void WindowCommands::IsSourcemsstoreAllowed(Other::threadBoolResult& isAllowed){
+	std::string processID;																				//stores process id of launched cmd
+	std::vector<std::wstring> resettedWingetData;										//stores data from resettedWinget.txt
+
+	system("start \"IDEUpdatingScript-ToBeTerminated\" /min cmd /c \"chcp 65001 && winget update > \"ReadFromReports\\resettedWinget.txt\"\"");
+	std::this_thread::sleep_for(std::chrono::seconds(4));								//waiting till msstore source has been decided or not
+
+	WindowCommands::FindProcess("IDEUpdatingScript-ToBeTerminated", processID);
+	WindowCommands::TerminateProcess(processID);
+	std::this_thread::sleep_for(std::chrono::seconds(2));								//waiting till txt file is filled
+
+	//getting file contents and checking if msstore is allowed
+	Other::Funx::GetTextFileContents(L"resettedWinget", resettedWingetData);
+	if (resettedWingetData[resettedWingetData.size() - 1] == L"[Y] Yes  [N] No: ") {
+		isAllowed = Other::threadBoolResult::False;
+	}
+	else {
+		isAllowed = Other::threadBoolResult::True;
+	}
+}
+
+
+void WindowCommands::GenerateUpdateReport(std::vector<Other::ProgrammesToUpdate>& updateList, Other::threadBoolResult& hasFinished){
+	system("winget update --accept-source-agreements | find \"winget\" > ReadFromReports\\updateReport.txt");		//using winget to get report and windows to put that report in txt file
+	
+	Other::Funx::GetToUpdateList(updateList, hasFinished);
 }
 
 
 void WindowCommands::UpdateProgramme(std::string id){
-	std::string command = "winget upgrade " + id + " -h --force > ReadFromReports\\updatingAttempt.txt";	//building command to pass into windows console
+	//building command to pass into windows console
+	std::string command = "winget upgrade --id\"" + id + "\" --silent --accept-package-agreements --force > ReadFromReports\\updatingAttempt.txt";
 
 	system(command.c_str());																																//using winget to update and windows to put that report in txt file
 }
 
 
-void WindowCommands::TerminateProcess(std::string processID){
-	std::string command = "taskkill /pid " + processID;			//adding process id to kill command
-	system(command.c_str());													//executing command
+bool WindowCommands::FindProcess(std::string processName, std::string& processID){
+	std::string command = "tasklist /v | find \"" + processName + "\" > ReadFromReports\\tasklist.txt";
+	
+	system(command.c_str());
+	std::this_thread::sleep_for(std::chrono::seconds(4));
+	
+	return Other::Funx::GetProcessID(processID);
 }
 
 
-void WindowCommands::HasAdminPrivileges(Other::threadBoolResult& hasPrivleges){
+void WindowCommands::TerminateProcess(std::string processID){
+	std::string command = "taskkill /pid " + processID + " & cls";	//adding process id to kill command
+	system(command.c_str());															//executing command
+}
+
+
+void WindowCommands::HasAdminPrivileges(Other::threadBoolResult& hasPrivileges){
 	std::vector<std::wstring> fileContents;								//stores hasAdminPrivileges.txt contents
 
 	/*
@@ -93,11 +124,11 @@ void WindowCommands::HasAdminPrivileges(Other::threadBoolResult& hasPrivleges){
 	Other::Funx::GetTextFileContents(L"adminTest", fileContents);
 	system("cls");
 
-	if (fileContents.size()) {
-		hasPrivleges = Other::threadBoolResult::True;
+	if (fileContents.size() - 1) {
+		hasPrivileges = Other::threadBoolResult::True;
 	}
 	else {
-		hasPrivleges = Other::threadBoolResult::False;
+		hasPrivileges = Other::threadBoolResult::False;
 	}
 }
 
@@ -105,13 +136,18 @@ void WindowCommands::HasAdminPrivileges(Other::threadBoolResult& hasPrivleges){
 void WindowCommands::HasGuiLaunched(Other::threadBoolResult& hasLaunched){
 	std::vector<std::wstring> hasGuiLaunchedReport;							//used to store report if Uninstaller is open
 
+	/*
+	redundant part
+	*/
 	//starting and waiting for finder thread to finish
 	std::thread uninstallFinder(system, "tasklist /v | find \"Uninstall\" > ReadFromReports\\hasGuiLaunched.txt");
 	uninstallFinder.join();
 
 	//loading data into memory
 	Other::Funx::GetTextFileContents(L"hasGuiLaunched.txt", hasGuiLaunchedReport);
-
+	/*
+	redundant part
+	*/
 	if (hasGuiLaunchedReport.size()) {
 		hasLaunched = Other::threadBoolResult::True;
 

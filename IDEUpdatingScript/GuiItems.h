@@ -22,7 +22,7 @@ namespace GuiItems {
 		/*
 		used to change text
 		*/
-		void SetText(std::wstring text);
+		void SetText(std::wstring text, unsigned int textSize, sf::Vector2f textPosition, sf::Vector2f textOffSet);
 
 
 		/*

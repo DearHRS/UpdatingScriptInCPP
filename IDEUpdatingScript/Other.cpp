@@ -68,8 +68,10 @@ void Other::Funx::BreakSentenceIntoWords(std::wstring inputSentance, std::vector
     for (unsigned int i = 0; i < inputSentance.size(); i++) {
         //if encountered space then inputting formed word into given std::vector<std::wstring>
         if (inputSentance[i] == L' ') {
-            outputArray.push_back(tempWstring);
-            tempWstring = L"";
+            if (tempWstring != L"") {
+                outputArray.push_back(tempWstring);
+                tempWstring = L"";
+            }            
         }
 
         //word hasn't formed yet, adding wchar to tempWstring
@@ -86,15 +88,28 @@ void Other::Funx::BreakSentenceIntoWords(std::wstring inputSentance, std::vector
 
 
 void Other::Funx::GetTextFileContents(std::wstring filename, std::vector<std::wstring>& outputArray){
-	std::wfstream readFromFile(L"ReadFromReports\\" + filename + L".txt");      //loading file into memory from ReadFromReports folder
-	std::wstring tempWstring;                                                                                   //used to load a line from file being read
+    std::wfstream readFromFile(L"ReadFromReports\\" + filename + L".txt");      //loading file into memory from ReadFromReports folder
+    std::wstring tempWstring;                                                                                   //used to create a line from file being read
+    wchar_t wcharFromFile;                                                                                      //used to load a single symbol from file
 
-    //filling contents into given std::vector<std::wstring>
-	while (std::getline(readFromFile, tempWstring)) {
-		outputArray.push_back(tempWstring);                                                         //adding recent read line to given std::vector<std::wstring>&
-	}
+    //pulling 1 symbol at a time from file
+    while (readFromFile >> std::noskipws >> wcharFromFile) {
+        //if symbol is newline then upload it to vector and restart making line
+        if (wcharFromFile == L'\n') {
+            outputArray.push_back(tempWstring);
 
-	readFromFile.close();                                                                                       //unloading file from memory
+            tempWstring = L"";
+        }
+        //any other symbol used to form line
+        else {
+            tempWstring += wcharFromFile;
+        }
+    }
+
+    //last line doesn't end with \n character, so catching it here
+    outputArray.push_back(tempWstring);
+
+    readFromFile.close();                                                                                       //unloading file from memory
 }
 
 
@@ -115,7 +130,54 @@ std::wstring Other::Funx::GetCHCP(){
 }
 
 
-void Other::Funx::GetToUpdateList(std::vector<Other::ProgrammesToUpdate>& updateList){
+bool Other::Funx::GetProcessID(std::string& processID){
+    std::vector<std::wstring> fileData;         //used to store notepads data
 
+    //loading files into memory
+    Other::Funx::GetTextFileContents(L"tasklist", fileData);
+
+    //checking if txt file has any contents
+    if (fileData.size() > 1) {
+        //breaking gotten sentance into only words
+        Other::Funx::BreakSentenceIntoWords(fileData[0], fileData);
+        
+        //fetching process id
+        processID = std::string(fileData[2].begin(), fileData[2].end());
+
+        return true;
+    }
+
+    //if txt file has no contents
+    return false;
+}
+
+
+void Other::Funx::GetToUpdateList(std::vector<Other::ProgrammesToUpdate>& updateList, Other::threadBoolResult& isThereProgrammes){
+    std::vector<std::wstring> fileData;                                                 //used to store file data from txt file
+
+    Other::Funx::GetTextFileContents(L"updateReport", fileData);    //loading file data into memory
+
+    //if nothing found
+    if (fileData.size() == 1) {
+        isThereProgrammes = Other::threadBoolResult::False;
+    }
+    //deciphering txt file
+    else {
+        for (unsigned int i = 0; i < fileData.size() - 1; i++) {
+            std::vector<std::wstring> brokenLine;                                               //used to break fetched data in fileData vector
+            std::wstring name = L"";                                                                    //used to form name from fetched data in fileData vector
+            
+            Other::Funx::BreakSentenceIntoWords(fileData[i], brokenLine);    //breaking sentance from fileData vector
+
+            //forming name
+            for (unsigned int j = 0; j < brokenLine.size() - 4; j++) {
+                name += brokenLine[j] + L" ";
+            }
+
+            updateList.push_back(Other::ProgrammesToUpdate(name, brokenLine[brokenLine.size() - 4], brokenLine[brokenLine.size() - 3], brokenLine[brokenLine.size() - 2]));
+        }
+
+        isThereProgrammes = Other::threadBoolResult::True;
+    }
 }
 

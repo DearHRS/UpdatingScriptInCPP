@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+
 namespace Other {
 	/*
 	contains structs and functions used around the code
@@ -11,7 +13,6 @@ namespace Other {
 		fstream
 		string
 		vector
-
 	*/
 
 
@@ -22,8 +23,12 @@ namespace Other {
 	enum threadBoolResult{notFinished, True, False};
 
 
-	//predefined programme stages
-	enum ProgrammeStage { stage00, stage01, stage02, stage15, stage20 , stageCloseWindow};  
+	/*
+	predefined programme stages
+
+	-maybe change stage's name to what they do
+	*/
+	enum ProgrammeStage { stageGetSetCHCP, stageCheckAdminPrivileges, stageCheckNet, stageCheckSourcemsstore, stageSourcemsstoreFailed, stageGenerateUpdateListInitializer, stageGenerateUpdateList, stage15, stage20 , stageCloseWindow};
 
 
 	//used to store contents for programmes to update
@@ -48,11 +53,14 @@ namespace Other {
 
 		/*
 		breaks sentance into words
+
+		and adds those words into given std::vector<std::wstring>&
 		*/
 		static void BreakSentenceIntoWords(std::wstring inputSentance, std::vector<std::wstring>& outputArray);
 
 
 		/*
+		currently has bugs with character outside of utf 16 range
 		reads from given file name and copys them into given std::vector<std::wstring>&
 		*/
 		static void GetTextFileContents(std::wstring filename, std::vector<std::wstring>& outputArray);
@@ -66,8 +74,17 @@ namespace Other {
 
 
 		/*
-		Gets list of programmes that require updates
+		deciphers file 
+		returns true if process Id was found
+		else false
 		*/
-		static void GetToUpdateList(std::vector<Other::ProgrammesToUpdate>& updateList);
+		static bool GetProcessID(std::string& processID);
+
+
+		/*
+		deciphers file
+		returns list of programmes that require updates
+		*/
+		static void GetToUpdateList(std::vector<Other::ProgrammesToUpdate>& updateList, Other::threadBoolResult& isThereProgrammes);
 	};
 }
