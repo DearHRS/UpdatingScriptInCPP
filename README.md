@@ -25,7 +25,9 @@ check if msstore source is available in winget
 
 checks which programmes need updating
 
-display which programme needs updating in form of list so user can pick what to update
+interactable gui items like list and buttons fully implement
+
+displaing which programmes to update and allowing user to select programme they want to update using list and then button to confirm their request
 
 
 not implement yet:
