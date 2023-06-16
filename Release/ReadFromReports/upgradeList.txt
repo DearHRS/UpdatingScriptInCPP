@@ -1,0 +1,7 @@
+   -\|/-    -\| Name                                     Id                               Version  Available Source
+---------------------------------------------------------------------------------------------------
+IntelliJ IDEA Community Edition 2022.2.3 JetBrains.IntelliJIDEA.Community 2022.2.3 2023.1    winget
+PostgreSQL 15                            PostgreSQL.PostgreSQL            15       15.3.1    winget
+WinRAR 6.21 (64-разрядная)               RARLab.WinRAR                    6.21.0   6.22.0    winget
+Python 3.7.8 (32-bit)                    Python.Python.3.7                3.7.8    3.7.9     winget
+4 upgrades available.
