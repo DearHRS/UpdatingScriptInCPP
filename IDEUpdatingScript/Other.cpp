@@ -1,6 +1,10 @@
 #include "Other.h"
 
 
+Other::ProgrammesToUpdate::ProgrammesToUpdate() {
+}
+
+
 Other::ProgrammesToUpdate::ProgrammesToUpdate(std::wstring name, std::wstring id, std::wstring fromVersion, std::wstring toVersion) {
 	this->name = name;
 	this->id = id;

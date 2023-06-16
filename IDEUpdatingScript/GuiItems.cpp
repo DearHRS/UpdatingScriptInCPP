@@ -1,6 +1,8 @@
 #include "GuiItems.h"
 #include <iostream>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//loading animation thing here
 GuiItems::LoadingAnimation::~LoadingAnimation() {
 }
 
@@ -9,22 +11,21 @@ GuiItems::LoadingAnimation::LoadingAnimation(sf::Texture* spritesheet, sf::Font*
 	animation = Animation(spritesheet, spriteCount, spriteLifeTime);		//setting Animation class of button
 
 	/*
-	setting font style and its text
-	*/
-	this->text.setFont(*font);
-	this->text.setString(text);
-	this->text.setCharacterSize(textSize);
-	this->text.setOrigin(body.getSize() / 2.0f);
-	this->text.setPosition(animationPosition.x - textOffSet.x, animationPosition.y - textOffSet.y);
-	this->text.setFillColor(sf::Color(0, 0, 0));
-
-	/*
 	setting body's parameters
 	*/
 	body.setSize(animationSize);
 	body.setOrigin(body.getSize() / 2.0f);
 	body.setTexture(spritesheet);
 	body.setPosition(animationPosition);
+
+	/*
+	setting font style and its text
+	*/
+	this->text.setFont(*font);
+	this->text.setString(text);
+	this->text.setCharacterSize(textSize);
+	this->text.setPosition(animationPosition.x - textOffSet.x, animationPosition.y - textOffSet.y);
+	this->text.setFillColor(sf::Color(0, 0, 0));
 }
 
 
@@ -53,7 +54,7 @@ void GuiItems::LoadingAnimation::Draw(sf::RenderWindow& window) {
 	window.draw(text);
 }
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Button logic below here
 */
@@ -70,37 +71,62 @@ GuiItems::Button::Button(sf::Texture* spritesheet, sf::Font* font, std::wstring 
 	animation = Animation(spritesheet, spriteCount, spriteCurrentTime);		//setting Animation class of button
 
 	/*
-	setting font style and its text
-	*/
-	this->text.setFont(*font);
-	this->text.setString(text);
-	this->text.setCharacterSize(textSize);
-	this->text.setOrigin(body.getSize() / 2.0f);
-	this->text.setPosition(buttonPosition.x - textOffSet.x, buttonPosition.y - textOffSet.y);
-	this->text.setFillColor(sf::Color(255, 255, 255));
-
-	/*
 	setting button's size, texture and position
 	*/
 	body.setSize(buttonSize);
 	body.setOrigin(body.getSize() / 2.0f);
 	body.setTexture(spritesheet);
 	body.setPosition(buttonPosition);
+
+	/*
+	setting font style and its text
+	*/
+	this->text.setFont(*font);
+	this->text.setString(text);
+	this->text.setCharacterSize(textSize);
+	this->text.setPosition(buttonPosition.x - textOffSet.x, buttonPosition.y - textOffSet.y);
+	this->text.setFillColor(sf::Color(255, 255, 255));
 }
 
 
-void GuiItems::Button::Update(float deltaTime, sf::Vector2i mousePosition, Other::ProgrammeStage& stage, Other::ProgrammeStage setStageTo){
-	int spriteRow = 0;											//parameter to select which row from spritesheet to use
+void GuiItems::Button::ResetPositionAndText(std::wstring text, unsigned int textSize, sf::Vector2f textOffSet, sf::Vector2f buttonPosition){
+	/*
+	setting button's position
+	*/
+	body.setPosition(buttonPosition);
+
+	/*
+	setting font style and its text
+	*/
+	this->text.setString(text);
+	this->text.setCharacterSize(textSize);
+	this->text.setPosition(buttonPosition.x - textOffSet.x, buttonPosition.y - textOffSet.y);
+}
+
+
+void GuiItems::Button::Update(float deltaTime, sf::Event& events, sf::Vector2i mousePosition, Other::ProgrammeStage& stage, Other::ProgrammeStage setStageTo){
+	int spriteRow = 1;											//parameter to select which row from spritesheet to use
 	text.setFillColor(sf::Color(0, 0, 0));
 
+	//if button is disabled
+	if (isDisabled) {
+		spriteRow = 0;
+		text.setFillColor(sf::Color(193, 193, 193));
+	}
 	//if mouse on top of button
-	if ((mousePosition.x > (body.getPosition().x - body.getSize().x / 2.0f) && mousePosition.x < (body.getPosition().x + body.getSize().x / 2.0f)) && ((mousePosition.y > body.getPosition().y - body.getSize().y / 2.0f) && mousePosition.y < (body.getPosition().y + body.getSize().y / 2.0f))) {
-		spriteRow = 1;
+	else if ((mousePosition.x > (body.getPosition().x - body.getSize().x / 2.0f) && mousePosition.x < (body.getPosition().x + body.getSize().x / 2.0f)) && ((mousePosition.y > body.getPosition().y - body.getSize().y / 2.0f) && mousePosition.y < (body.getPosition().y + body.getSize().y / 2.0f))) {
+		spriteRow = 2;
 		text.setFillColor(sf::Color(255, 255, 255));
 		
 		//if button left clicked
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-			stage = setStageTo;
+		if (events.mouseButton.button == sf::Mouse::Left) {
+			/*
+			animation of button getting pressed maybe
+			*/
+			//if clicked button is released
+			if (events.type == sf::Event::MouseButtonReleased) {
+				stage = setStageTo;
+			}
 		}
 	}
 
@@ -119,6 +145,102 @@ void GuiItems::Button::Draw(sf::RenderWindow& window){
 }
 
 
+void GuiItems::Button::SetEnable(bool isDisabled){
+	this->isDisabled = isDisabled;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//list stuff here
+GuiItems::ListItem::~ListItem() {
+}
+
+
+GuiItems::ListItem::ListItem() {
+}
+
+
+GuiItems::ListItem::ListItem(sf::Texture* spritesheet, sf::Font* font, unsigned int count, Other::ProgrammesToUpdate programme, sf::Vector2f listPosition, sf::Vector2u spriteCount, float spriteCurrentTime) {
+	animation = Animation(spritesheet, spriteCount, spriteCurrentTime);		//setting Animation class of button
+
+	/*
+	setting button's size, texture and position
+	*/
+	body.setSize(sf::Vector2f(850.0f, 200.0f));
+	body.setOrigin(body.getSize() / 2.0f);
+	body.setTexture(spritesheet);
+	body.setPosition(listPosition);
+
+	spriteRow = 0;
+	isSelected = false;
+
+	/*
+	setting font style and its text
+	*/
+	this->text.setFont(*font);
+	this->text.setString(std::to_wstring(count) + L".  " + programme.name + L"\n\n" 
+		+ L"        текущая версия: " + programme.fromVersion + L"\n"
+		+ L"     доступная версия: " + programme.toVersion);
+	this->text.setCharacterSize(30);
+	this->text.setOrigin(body.getSize() / 2.0f);
+	this->text.setFillColor(sf::Color(0, 0, 0));
+}
+
+
+void GuiItems::ListItem::Update(float deltaTime, sf::Event& events, sf::Vector2i mousePosition, float moveBy) {
+	//moving body and text
+	body.setPosition(body.getPosition().x, body.getPosition().y + moveBy);
+	text.setPosition(body.getPosition().x + 48.0, body.getPosition().y + 25.0);
+	
+	//setting parameter to select which row from spritesheet to use
+	if (!isSelected) {
+		spriteRow = 0;
+	}
+	else {
+		spriteRow = 1;
+	}
+
+	//if mouse on top of list
+	if (!(mousePosition.y < 145.0f) && (mousePosition.x > (body.getPosition().x - body.getSize().x / 2.0f) && mousePosition.x < (body.getPosition().x + body.getSize().x / 2.0f)) && ((mousePosition.y > body.getPosition().y - body.getSize().y / 2.0f) && mousePosition.y < (body.getPosition().y + body.getSize().y / 2.0f))) {
+		//if button left clicked
+		if (events.mouseButton.button == sf::Mouse::Left) {
+			/*
+			animation of button getting pressed maybe
+			*/
+			//if clicked button is released
+			if (events.type == sf::Event::MouseButtonReleased) {
+				isSelected = not isSelected;
+			}
+		}
+	}
+
+	//updating animation class and selecting sprite to display
+	animation.Update(spriteRow, deltaTime);
+	body.setTextureRect(animation.textureRect);
+}
+
+
+void GuiItems::ListItem::Draw(sf::RenderWindow& window) {
+	/*
+	drawing body first so text can be on top of it
+	*/
+	window.draw(body);
+	window.draw(text);
+}
+
+
+bool GuiItems::ListItem::IsSelected(){
+	return isSelected;
+}
+
+
+float GuiItems::ListItem::getYPosition(){
+	return body.getPosition().y;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//textboard stuff here
 GuiItems::TextBoard::~TextBoard(){
 }
 

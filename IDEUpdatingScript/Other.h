@@ -28,7 +28,10 @@ namespace Other {
 
 	-maybe change stage's name to what they do
 	*/
-	enum ProgrammeStage { stageGetSetCHCP, stageCheckAdminPrivileges, stageCheckNet, stageCheckSourcemsstore, stageSourcemsstoreFailed, stageGenerateUpdateListInitializer, stageGenerateUpdateList, stage15, stage20 , stageCloseWindow};
+	enum ProgrammeStage { 
+		stageGetSetCHCP, stageCheckAdminPrivileges, stageCheckNet, stageCheckSourcemsstore, stageSourcemsstoreFailed, 
+		stageGenerateUpdateListInitializer, stageGenerateUpdateList, stageUseUpdateList, stageStartUpdating, 
+		stageCloseWindow};
 
 
 	//used to store contents for programmes to update
@@ -38,6 +41,7 @@ namespace Other {
 		std::wstring fromVersion;					//stores programme's current version in system
 		std::wstring toVersion;						//stores programme's current version available to update
 
+		ProgrammesToUpdate();
 		ProgrammesToUpdate(std::wstring name, std::wstring id, std::wstring fromVersion, std::wstring toVersion);
 	};
 

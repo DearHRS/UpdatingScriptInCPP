@@ -54,8 +54,10 @@ int main(){
     */
     sf::Event events;                                       // varaible to store events happening during execution
     sf::Vector2i mousePosition;                      //struct to store positions of mouse
-    float deltaTime = 0.0f;                              //time most definitely only used for movements in platformer game
+    float deltaTime = 0.0f;                              //cycle time between frames
+    
     sf::Clock clock;                                        //repeating clock
+
     //sf::View pov(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(screenHSize, screenVSize));
     sf::Font font;                                              //font style
     font.loadFromFile("Assets\\text\\TimesNewRoman.ttf");
@@ -84,7 +86,7 @@ int main(){
     */
     sf::Texture buttonSpriteSheet;
     buttonSpriteSheet.loadFromFile("Assets\\animations\\pngFiles\\button.png");
-    GuiItems::Button closeButton(&buttonSpriteSheet, &font, L"закрыть", 24, sf::Vector2f(40.0f, 15.0f), sf::Vector2f(200.0f, 80.0f), sf::Vector2f((screenHSize) / 2, (screenVSize) * 4 / 5), sf::Vector2u(1, 2), 0.1f);
+    GuiItems::Button button(&buttonSpriteSheet, &font, L"закрыть", 24, sf::Vector2f(40.0f, 15.0f), sf::Vector2f(200.0f, 80.0f), sf::Vector2f((screenHSize) / 2, (screenVSize) * 4 / 5), sf::Vector2u(1, 3), 0.1f);
 
 
     /*
@@ -94,6 +96,14 @@ int main(){
     textBoardTexture.loadFromFile("Assets\\animations\\pngFiles\\textBoard.png");
     GuiItems::TextBoard textBoard(&textBoardTexture, &font);
 
+
+    sf::Texture listTexture;
+    listTexture.loadFromFile("Assets\\animations\\pngFiles\\list.png");
+
+
+    sf::Texture updatingMenuTexture;
+    updatingMenuTexture.loadFromFile("Assets\\animations\\pngFiles\\updatingMenu.png");
+    GuiItems::TextBoard updatingMenuBoard(&updatingMenuTexture, &font);
 
     /*
     predefined programme stages
@@ -105,9 +115,12 @@ int main(){
     /*
     parameters to store data
     */
-    std::wstring chcp[2] = {L"", L"65001" };                                              //stores current encoding codepage and one to use
-    std::vector<Other::ProgrammesToUpdate> programmesToUpdate;      //stores name, id, current version and available version for programmes to update
-
+    std::wstring chcp[2] = {L"", L"65001" };                                             //stores current encoding codepage and one to use
+    std::vector<Other::ProgrammesToUpdate> programmesToUpdate;    //stores name, id, current version and available version for programmes to update
+    std::vector<GuiItems::ListItem> lists;                                                  //stores gui for programmeToUpdate
+    
+    float moveby;                                                                                        //stores scroll amount
+    unsigned int programmesSelectedCounter;                                          //stores amount of programmes selected for updating
 
     /*
     threads
@@ -131,7 +144,6 @@ int main(){
     Other::threadBoolResult getUpdateThreadResult = Other::threadBoolResult::notFinished;
 
 
-    std::string dummy;
 
     while (window.isOpen()){
         /*
@@ -212,8 +224,8 @@ int main(){
                     textBoard.Draw(window);
 
                     //displaying button
-                    closeButton.Update(deltaTime, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
-                    closeButton.Draw(window);
+                    button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
+                    button.Draw(window);
                 }
                 break;
 
@@ -224,7 +236,7 @@ int main(){
                 chcpThreadResult = Other::threadBoolResult::notFinished;
                 break;
 
-            case Other::False:
+            case Other::threadBoolResult::False:
                 /*
                 illegal state
                 */
@@ -260,8 +272,8 @@ int main(){
                 textBoard.Draw(window);
 
                 //displaying button
-                closeButton.Update(deltaTime, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
-                closeButton.Draw(window);
+                button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
+                button.Draw(window);
                 break;
             }
 
@@ -270,12 +282,13 @@ int main(){
         //checking if msstore source is allowed on winget
         case Other::ProgrammeStage::stageCheckSourcemsstore:
             switch (hasSourceResult){
-            case Other::True:
+            case Other::threadBoolResult::True:
                 /*
                 if source is allowed
                 */
                 break;
-            case Other::False:
+
+            case Other::threadBoolResult::False:
                 stage = Other::ProgrammeStage::stageSourcemsstoreFailed;
                 WindowCommands::SetCHCP(std::string(chcp[0].begin(), chcp[0].end()));
                 acceptMsstoreSourceThread = std::thread(system, "winget upgrade");
@@ -295,14 +308,14 @@ int main(){
             textBoard.Draw(window);
 
             //displaying button
-            closeButton.Update(deltaTime, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
-            closeButton.Draw(window);
+            button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
+            button.Draw(window);
             break;
 
 
         //generating to update list
         case Other::ProgrammeStage::stageGenerateUpdateListInitializer:
-            getUpdateListThread = std::thread(WindowCommands::GenerateUpdateReport, std::cref(programmesToUpdate),std::cref(getUpdateThreadResult));
+            getUpdateListThread = std::thread(WindowCommands::GenerateUpdateReport, std::ref(programmesToUpdate), std::ref(getUpdateThreadResult));
 
             stage = Other::ProgrammeStage::stageGenerateUpdateList;
             break;
@@ -311,20 +324,20 @@ int main(){
         case Other::ProgrammeStage::stageGenerateUpdateList:
             switch (getUpdateThreadResult){
             case Other::notFinished:
-                loadingAnimation.SetText(L"Пожалуйста подождите, проверка \nпоиск программ для обновления", 24, sf::Vector2f((screenHSize) / 2, (screenVSize) * 5 / 6), sf::Vector2f(175.0f, 85.0f));
+                loadingAnimation.SetText(L"Пожалуйста подождите, проверка \n поиск программ для обновления", 24, sf::Vector2f((screenHSize) / 2, (screenVSize) * 5 / 6), sf::Vector2f(175.0f, 85.0f));
                 break;
 
             //if something to update found
-            case Other::True:
+            case Other::threadBoolResult::True:
+                for (unsigned int i = 0; i < programmesToUpdate.size(); i++) {
+                    lists.push_back(GuiItems::ListItem(&listTexture, &font, (i + 1), programmesToUpdate[i], sf::Vector2f(screenHSize / 2.0f, 250.0f * (i + 1)), sf::Vector2u(1, 2), 0.1f));
+               }
 
-                go finish list item radio button thing and add it here
-
-                then add a button that just leads to updating those programmes 
-
+                stage = Other::ProgrammeStage::stageUseUpdateList;
                 break;
             
             //if nothing to update was found
-            case Other::False:
+            case Other::threadBoolResult::False:
                 //clearing screen from loading animation
                 window.draw(background);
 
@@ -333,8 +346,8 @@ int main(){
                 textBoard.Draw(window);
 
                 //displaying button
-                closeButton.Update(deltaTime, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
-                closeButton.Draw(window);
+                button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
+                button.Draw(window);
                 break;
             }
 
@@ -342,20 +355,67 @@ int main(){
 
 
         //initializer of stage 2
-        case Other::ProgrammeStage::stage20:
+        case Other::ProgrammeStage::stageUseUpdateList:
+            //clearing screen from loading animation
+            window.draw(background);
+
+            //moving list by scroll amount
+            moveby = floorf(events.mouseWheelScroll.delta);
+            //titlebar overflow bug safety
+            if (moveby > 4) {
+                moveby = 4;
+            }
+            else if (moveby < -4) {
+                moveby = -4;
+            }
+
+            //not allowing elements of list to scroll indefinitely
+            if (moveby > 0 && lists[0].getYPosition() >= 250.0f) {
+                moveby = 0;
+            }
+            else if (moveby < 0 && lists[lists.size() - 1].getYPosition() <= 500.0f) {
+                moveby = 0;
+            }
+
+            //updating and displaying list items
+            for (unsigned int i = 0; i < lists.size(); i++) {
+                lists[i].Update(deltaTime, events, mousePosition, moveby * 20);
+                lists[i].Draw(window);
+            }
+
+            //resetting scrollwheel cuz it only does it itself when mouse moves...
+            events.mouseWheelScroll.delta = 0;
+
+            programmesSelectedCounter = 0;
+            for (unsigned int i = 0; i < lists.size(); i++) {
+                if (lists[i].IsSelected()) {
+                    programmesSelectedCounter++;
+                }
+            }
+
+            //displaying textboard
+            updatingMenuBoard.SetText(L"Программы выбраны " + std::to_wstring(programmesSelectedCounter) + L" из " + std::to_wstring(lists.size()), 36, sf::Vector2f(480.0f, 25.0f), sf::Vector2f(screenHSize / 2, 145.0f / 2), sf::Vector2f(1000.0f, 145.0f));
+            updatingMenuBoard.Draw(window);
             
-            break;
+            //if programmeSelectedCounter is 0 then button is set to disabled
+            button.SetEnable(programmesSelectedCounter == 0);
 
+            button.ResetPositionAndText(L"обновить", 24, sf::Vector2f(45.0f, 15.0f), sf::Vector2f(800.0f, 70.0f));
+            button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageStartUpdating);
+            button.Draw(window);
 
-        default:
             break;
         
+        case Other::ProgrammeStage::stageStartUpdating:
+            add windowsCommand function to update selected programme
+            break;
+
         case Other::ProgrammeStage::stageCloseWindow:
             window.close();
             break;
         }
 
-        
+        events.type = sf::Event::Count;     //resetting event; otherwise a lot of stuff does work as there is no nothing happening event in sfml
         window.display();
     }
 
