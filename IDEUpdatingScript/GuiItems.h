@@ -26,6 +26,11 @@ namespace GuiItems {
 
 
 		/*
+		resize and reposition
+		*/
+		void ResizeAndSetPosition(sf::Vector2f animationSize, sf::Vector2f animationPosition);
+
+		/*
 		draws button body and its text
 		*/
 		void Draw(sf::RenderWindow& window);
@@ -85,27 +90,30 @@ namespace GuiItems {
 	public:
 		~ListItem();
 		ListItem();
-		ListItem(sf::Texture* spritesheet, sf::Font* font, unsigned int count, Other::ProgrammesToUpdate programme, sf::Vector2f listPosition, sf::Vector2u spriteCount, float spriteCurrentTime);
+		ListItem(sf::Texture* spritesheet, sf::Font* font, unsigned int count, Other::ProgrammesToUpdate& programme, sf::Vector2f listPosition, sf::Vector2u spriteCount, float spriteCurrentTime);
 
+		Other::ProgrammesToUpdate programme;			//contains data of programme
 
 		/*
 		checks if list got pressed or cursor is howering on top of it, updates its sprite count if necessary
 		and moves list depending on cursor
 		*/
-		void Update(float deltaTime, sf::Event& events, sf::Vector2i mousePosition, float moveBy);
+		void Update(float deltaTime, bool allowInteractivity, sf::Event& events, sf::Vector2i mousePosition, float moveBy);
 
+		/*
+		sets text for get update result
+		*/
+		void setTextUpdateResult(std::wstring text);
 
 		/*
 		draws list body and its text into buffer frame
 		*/
 		void Draw(sf::RenderWindow& window);
 
-
 		/*
 		return if selected
 		*/
 		bool IsSelected();
-
 
 		/*
 		returns y position of list
@@ -114,7 +122,6 @@ namespace GuiItems {
 
 
 	private:
-		Other::ProgrammesToUpdate programme;		//contains data of programme
 		bool isSelected;												//used to hold state of being selected or not
 
 		sf::Texture spritesheet;									//contains entire spritesheet
@@ -123,6 +130,7 @@ namespace GuiItems {
 		int spriteRow;													//handles which row of spritesheet is played
 
 		sf::Text text;													//contains text to display
+		sf::Text textUpdateResult;								//contains update result to display
 		sf::Font font;													//contains font style used by text
 	};
 

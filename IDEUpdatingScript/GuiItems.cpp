@@ -46,6 +46,13 @@ void GuiItems::LoadingAnimation::SetText(std::wstring text, unsigned int textSiz
 }
 
 
+void GuiItems::LoadingAnimation::ResizeAndSetPosition(sf::Vector2f animationSize, sf::Vector2f animationPosition){
+	body.setSize(animationSize);
+	body.setOrigin(body.getSize() / 2.0f);
+	body.setPosition(animationPosition);
+}
+
+
 void GuiItems::LoadingAnimation::Draw(sf::RenderWindow& window) {
 	/*
 	drawing body first so text can be on top of it
@@ -70,6 +77,7 @@ GuiItems::Button::Button(sf::Texture* spritesheet, sf::Font* font, std::wstring 
 	
 	animation = Animation(spritesheet, spriteCount, spriteCurrentTime);		//setting Animation class of button
 
+	isDisabled = false;
 	/*
 	setting button's size, texture and position
 	*/
@@ -160,37 +168,47 @@ GuiItems::ListItem::ListItem() {
 }
 
 
-GuiItems::ListItem::ListItem(sf::Texture* spritesheet, sf::Font* font, unsigned int count, Other::ProgrammesToUpdate programme, sf::Vector2f listPosition, sf::Vector2u spriteCount, float spriteCurrentTime) {
+GuiItems::ListItem::ListItem(sf::Texture* spritesheet, sf::Font* font, unsigned int count, Other::ProgrammesToUpdate& programme, sf::Vector2f listPosition, sf::Vector2u spriteCount, float spriteCurrentTime) {
 	animation = Animation(spritesheet, spriteCount, spriteCurrentTime);		//setting Animation class of button
 
 	/*
-	setting button's size, texture and position
+	setting list's size, texture and position
 	*/
-	body.setSize(sf::Vector2f(850.0f, 200.0f));
+	body.setSize(sf::Vector2f(950.0f, 200.0f));
 	body.setOrigin(body.getSize() / 2.0f);
 	body.setTexture(spritesheet);
 	body.setPosition(listPosition);
 
 	spriteRow = 0;
 	isSelected = false;
+	
+	//setting programme struct
+	this->programme = programme;
 
 	/*
 	setting font style and its text
 	*/
-	this->text.setFont(*font);
-	this->text.setString(std::to_wstring(count) + L".  " + programme.name + L"\n\n" 
-		+ L"        текущая версия: " + programme.fromVersion + L"\n"
-		+ L"     доступная версия: " + programme.toVersion);
-	this->text.setCharacterSize(30);
-	this->text.setOrigin(body.getSize() / 2.0f);
-	this->text.setFillColor(sf::Color(0, 0, 0));
+	text.setFont(*font);
+	text.setString(std::to_wstring(count) + L".  " + programme.name + L"\n\n" 
+		+ L"       текущая версия: " + programme.fromVersion + L"\n"
+		+ L"    доступная версия: " + programme.toVersion);
+	text.setCharacterSize(30);
+	text.setOrigin(body.getSize() / 2.0f);
+	text.setFillColor(sf::Color(0, 0, 0));
+
+	textUpdateResult.setCharacterSize(18);
+	textUpdateResult.setString(L"");
+	textUpdateResult.setFont(*font);
+	textUpdateResult.setOrigin(body.getSize() / 2.0f);
+	textUpdateResult.setFillColor(sf::Color(0, 0, 0));
 }
 
 
-void GuiItems::ListItem::Update(float deltaTime, sf::Event& events, sf::Vector2i mousePosition, float moveBy) {
+void GuiItems::ListItem::Update(float deltaTime, bool allowInteractivity, sf::Event& events, sf::Vector2i mousePosition, float moveBy) {
 	//moving body and text
 	body.setPosition(body.getPosition().x, body.getPosition().y + moveBy);
-	text.setPosition(body.getPosition().x + 48.0, body.getPosition().y + 25.0);
+	text.setPosition(body.getPosition().x + 25.0, body.getPosition().y + 25.0);
+	textUpdateResult.setPosition(body.getPosition().x + 420.0, body.getPosition().y + 75.0);
 	
 	//setting parameter to select which row from spritesheet to use
 	if (!isSelected) {
@@ -203,7 +221,7 @@ void GuiItems::ListItem::Update(float deltaTime, sf::Event& events, sf::Vector2i
 	//if mouse on top of list
 	if (!(mousePosition.y < 145.0f) && (mousePosition.x > (body.getPosition().x - body.getSize().x / 2.0f) && mousePosition.x < (body.getPosition().x + body.getSize().x / 2.0f)) && ((mousePosition.y > body.getPosition().y - body.getSize().y / 2.0f) && mousePosition.y < (body.getPosition().y + body.getSize().y / 2.0f))) {
 		//if button left clicked
-		if (events.mouseButton.button == sf::Mouse::Left) {
+		if (events.mouseButton.button == sf::Mouse::Left && allowInteractivity) {
 			/*
 			animation of button getting pressed maybe
 			*/
@@ -220,12 +238,18 @@ void GuiItems::ListItem::Update(float deltaTime, sf::Event& events, sf::Vector2i
 }
 
 
+void GuiItems::ListItem::setTextUpdateResult(std::wstring text){
+	textUpdateResult.setString(text);
+}
+
+
 void GuiItems::ListItem::Draw(sf::RenderWindow& window) {
 	/*
 	drawing body first so text can be on top of it
 	*/
 	window.draw(body);
 	window.draw(text);
+	window.draw(textUpdateResult);
 }
 
 

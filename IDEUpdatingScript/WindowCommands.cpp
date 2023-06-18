@@ -29,8 +29,8 @@ void WindowCommands::IsConnectedToNet(Other::threadBoolResult& hasConnected){
 	std::vector<std::wstring> pingReport[2];															//stores ping reports from google and yandex
 	
 	//pinging google and yandex
-	system("ping Google.com > ReadFromReports\\NetConnectionReport1.txt & start /min cmd /c \"chcp 65001 && ping Yandex.ru > ReadFromReports\\NetConnectionReport2.txt\"");
-	std::this_thread::sleep_for(std::chrono::seconds(4));		//waiting untill ping stopped
+	system("start /min cmd /c \"chcp 65001 && ping Yandex.ru > ReadFromReports\\NetConnectionReport2.txt\" & ping Google.com > ReadFromReports\\NetConnectionReport1.txt");
+	std::this_thread::sleep_for(std::chrono::seconds(1));		//waiting until txt files are generated
 
 	//getting generated file contents from previous threads
 	for (unsigned int i = 0; i < 2; i++) {
@@ -90,14 +90,6 @@ void WindowCommands::GenerateUpdateReport(std::vector<Other::ProgrammesToUpdate>
 }
 
 
-void WindowCommands::UpdateProgramme(std::string id){
-	//building command to pass into windows console
-	std::string command = "winget upgrade --id\"" + id + "\" --silent --accept-package-agreements --force > ReadFromReports\\updatingAttempt.txt";
-
-	system(command.c_str());																																//using winget to update and windows to put that report in txt file
-}
-
-
 bool WindowCommands::FindProcess(std::string processName, std::string& processID){
 	std::string command = "tasklist /v | find \"" + processName + "\" > ReadFromReports\\tasklist.txt";
 	
@@ -152,13 +144,48 @@ void WindowCommands::HasGuiLaunched(Other::threadBoolResult& hasLaunched){
 		hasLaunched = Other::threadBoolResult::True;
 
 		Other::Funx::BreakSentenceIntoWords(hasGuiLaunchedReport[0], hasGuiLaunchedReport);
-
-		std::wcout << "hasGuiLaunched found uninstaller running\n";
-		for (unsigned int i = 0; i < hasGuiLaunchedReport.size(); i++) {
-			std::wcout << ">" << hasGuiLaunchedReport[i] << "<\n";
-		}
 	}
 	else{
 		hasLaunched = Other::threadBoolResult::False;
 	}	
+}
+
+
+void WindowCommands::UpdateProgramme(std::vector<GuiItems::ListItem>& listOfProgrammes, std::wstring& menuDislayText, Other::threadBoolResult& hasFinished) {
+	for (unsigned int i = 0; i < listOfProgrammes.size(); i++ ) {
+		menuDislayText = L"обновляется программа : " + listOfProgrammes[i].programme.name;
+
+		if (listOfProgrammes[i].IsSelected()) {
+			std::vector<std::wstring> updateAttempResult;			//holds result after attempting update
+			unsigned int beginReadFrom;										//starting value from where result of update attempt is read
+			std::wstring resultToOutput = L"";								//result that is send to gui to display
+
+			//building command to pass into windows console
+			std::string command = "winget upgrade --id \"" + std::string(listOfProgrammes[i].programme.id.begin(), listOfProgrammes[i].programme.id.end()) + "\" --silent --accept-package-agreements --force > ReadFromReports\\updatingAttempt.txt";
+
+			system(command.c_str());		//using winget to update and windows to put that report in txt file
+
+			Other::Funx::GetTextFileContents(L"updatingAttempt", updateAttempResult);
+
+			//if result has more than 3 lines then trying to limit result to last 3 lines
+			if (updateAttempResult.size() > 3) {
+				beginReadFrom = updateAttempResult.size() - 3;
+			}
+			//if 3 lines or less than outputting what we got
+			else {
+				beginReadFrom = 0;
+			}
+
+			for (beginReadFrom; beginReadFrom < updateAttempResult.size(); beginReadFrom++) {
+				resultToOutput = resultToOutput + L" " + updateAttempResult[beginReadFrom] + L"\n";
+			}
+
+			listOfProgrammes[i].setTextUpdateResult(resultToOutput);
+		}
+		else {
+			listOfProgrammes[i].setTextUpdateResult(L"Пропущен, не был выбран");
+		}
+	}
+
+	hasFinished = Other::threadBoolResult::True;
 }

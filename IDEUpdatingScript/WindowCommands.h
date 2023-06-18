@@ -4,8 +4,7 @@
 #include <chrono>
 #include <thread>
 #include "Other.h"
-
-#include <iostream> //remove, only testing
+#include "GuiItems.h"
 
 /*
 call in thread, these launch exes to fetch data
@@ -51,9 +50,7 @@ public:
 
 	/*
 	pings google.com and yandex.ru to check if any of them reply
-
 	if they do then user has connection and true is returned
-
 	otherwise returns false
 	*/
 	static void IsConnectedToNet(Other::threadBoolResult& hasConnected);
@@ -72,11 +69,6 @@ public:
 	otherwise False
 	*/
 	static void GenerateUpdateReport(std::vector<Other::ProgrammesToUpdate>& updateList, Other::threadBoolResult& hasFinished);
-
-	/*testing required
-	updates programme using winget
-	*/
-	static void UpdateProgramme(std::string id);
 
 
 	/*
@@ -108,8 +100,8 @@ public:
 	static void HasGuiLaunched(Other::threadBoolResult& hasLaunched);
 
 
-	/*
-	starts a new cmd window and attempts winget upgrade, then result is added to txt file where original cmd is running from
-	start cmd.exe /c "winget upgrade > "resettedWinget.txt""
+	/*testing required
+	updates programme using winget
 	*/
+	static void UpdateProgramme(std::vector<GuiItems::ListItem>& programmesToUpdate, std::wstring& menuDisplayText, Other::threadBoolResult& hasFinished);
 };

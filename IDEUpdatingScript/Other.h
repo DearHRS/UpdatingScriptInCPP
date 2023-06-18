@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
 
 namespace Other {
 	/*
@@ -30,7 +29,7 @@ namespace Other {
 	*/
 	enum ProgrammeStage { 
 		stageGetSetCHCP, stageCheckAdminPrivileges, stageCheckNet, stageCheckSourcemsstore, stageSourcemsstoreFailed, 
-		stageGenerateUpdateListInitializer, stageGenerateUpdateList, stageUseUpdateList, stageStartUpdating, 
+		stageGenerateUpdateListInitializer, stageGenerateUpdateList, stageUseUpdateList, stageStartUpdatingInitializer, stageStartUpdating,
 		stageCloseWindow};
 
 

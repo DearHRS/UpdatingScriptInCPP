@@ -1,26 +1,3 @@
-/* 
-IDEUpdatingScript.cpp : This file contains the 'main' function. Program execution begins and ends there.
-To add:
-    +-1. way to parse cmd result (should be done in different thread othwerise gui is stuck until winget is done with its stuff)
-    +2. sfml library for interface
-    -3. way to understand cmd result and decipher which are IDE
-    -4. display it to user via sfml
-    -5. way for user to choose IDEs to update
-    -6. way to select particular IDEs and update them using "winget upgrade >programme id here< --force > Temp\\updatingAttempt.txt"
-
-
-    chcp 866 rushian cmd encoding
-*/
-
-//remove, only testing
-#include <iostream>
-#include <io.h>
-#include <fcntl.h>
-#include <fstream>
-//remove, only testing
-
-
-
 #include <string>
 #include <vector>
 #include <thread>
@@ -34,13 +11,6 @@ To add:
 
 
 int main(){
-    //remove, only testing
-    
-    _setmode(_fileno(stdin), 0x00020000);   //setting console to use unicode hex characters on input and output 
-    _setmode(_fileno(stdout), 0x00020000);  //setting console to use unicode hex characters on input and output 
-    //remove, only testing
-
-
     /*
     Window Parameters
     */
@@ -121,6 +91,7 @@ int main(){
     
     float moveby;                                                                                        //stores scroll amount
     unsigned int programmesSelectedCounter;                                          //stores amount of programmes selected for updating
+    std::wstring menuDisplayText;                                                             //stores what to display in menu
 
     /*
     threads
@@ -132,6 +103,7 @@ int main(){
     std::thread hasSourceThread;                        //used to check if msstore source is allowed on winget
     std::thread acceptMsstoreSourceThread;      //used to make user accept msstore
     std::thread getUpdateListThread;                  //used to get update list
+    std::thread doUpdateThread;                         //used to do updates from generated list
 
     /*
     threads finished
@@ -142,7 +114,7 @@ int main(){
     Other::threadBoolResult isConnectedToNetResult = Other::threadBoolResult::notFinished;
     Other::threadBoolResult hasSourceResult = Other::threadBoolResult::notFinished;
     Other::threadBoolResult getUpdateThreadResult = Other::threadBoolResult::notFinished;
-
+    Other::threadBoolResult doUpdateThreadResult = Other::threadBoolResult::notFinished;
 
 
     while (window.isOpen()){
@@ -379,7 +351,7 @@ int main(){
 
             //updating and displaying list items
             for (unsigned int i = 0; i < lists.size(); i++) {
-                lists[i].Update(deltaTime, events, mousePosition, moveby * 20);
+                lists[i].Update(deltaTime, true, events, mousePosition, moveby * 40);
                 lists[i].Draw(window);
             }
 
@@ -399,16 +371,78 @@ int main(){
             
             //if programmeSelectedCounter is 0 then button is set to disabled
             button.SetEnable(programmesSelectedCounter == 0);
-
             button.ResetPositionAndText(L"обновить", 24, sf::Vector2f(45.0f, 15.0f), sf::Vector2f(800.0f, 70.0f));
-            button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageStartUpdating);
+            button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageStartUpdatingInitializer);
             button.Draw(window);
 
             break;
         
-        case Other::ProgrammeStage::stageStartUpdating:
-            add windowsCommand function to update selected programme
+
+        case Other::ProgrammeStage::stageStartUpdatingInitializer:
+            doUpdateThread = std::thread(WindowCommands::UpdateProgramme, std::ref(lists), std::ref(menuDisplayText), std::ref(doUpdateThreadResult));
+
+            loadingAnimation.ResizeAndSetPosition(sf::Vector2f(140.0f, 140.0f), sf::Vector2f(850.0f, 70.0f));
+            loadingAnimation.SetText(L"", 24, sf::Vector2f((screenHSize) / 2, (screenVSize) * 5 / 6), sf::Vector2f(175.0f, 85.0f));
+            button.ResetPositionAndText(L"закрыть", 24, sf::Vector2f(40.0f, 15.0f), sf::Vector2f(800.0f, 70.0f));
+
+            stage = Other::ProgrammeStage::stageStartUpdating;
             break;
+
+
+        case Other::ProgrammeStage::stageStartUpdating:
+            //clearing screen from loading animation
+            window.draw(background);
+
+            //moving list by scroll amount
+            moveby = floorf(events.mouseWheelScroll.delta);
+            //titlebar overflow bug safety
+            if (moveby > 4) {
+                moveby = 4;
+            }
+            else if (moveby < -4) {
+                moveby = -4;
+            }
+
+            //not allowing elements of list to scroll indefinitely
+            if (moveby > 0 && lists[0].getYPosition() >= 250.0f) {
+                moveby = 0;
+            }
+            else if (moveby < 0 && lists[lists.size() - 1].getYPosition() <= 500.0f) {
+                moveby = 0;
+            }
+
+            //updating and displaying list items
+            for (unsigned int i = 0; i < lists.size(); i++) {
+                lists[i].Update(deltaTime, false, events, mousePosition, moveby * 40);
+                lists[i].Draw(window);
+            }
+
+            //resetting scrollwheel cuz it only does it itself when mouse moves...
+            events.mouseWheelScroll.delta = 0;
+
+            
+            switch (doUpdateThreadResult){
+            case Other::threadBoolResult::notFinished:
+                //displaying textboard
+                updatingMenuBoard.SetText(menuDisplayText, 36, sf::Vector2f(480.0f, 25.0f), sf::Vector2f(screenHSize / 2, 145.0f / 2), sf::Vector2f(1000.0f, 145.0f));
+                updatingMenuBoard.Draw(window);
+                
+                loadingAnimation.Draw(window);
+
+                break;
+
+            case Other::threadBoolResult::True:
+                //displaying textboard
+                updatingMenuBoard.SetText(L"Обновление завершено!", 36, sf::Vector2f(480.0f, 25.0f), sf::Vector2f(screenHSize / 2, 145.0f / 2), sf::Vector2f(1000.0f, 145.0f));
+                updatingMenuBoard.Draw(window);
+
+                button.Update(deltaTime, events, mousePosition, stage, Other::ProgrammeStage::stageCloseWindow);
+                button.Draw(window);
+
+                break;
+            }
+            break;
+
 
         case Other::ProgrammeStage::stageCloseWindow:
             window.close();
