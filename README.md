@@ -29,12 +29,9 @@ interactable gui items like list and buttons fully implement
 
 displaing which programmes to update and allowing user to select programme they want to update using list and then button to confirm their request
 
-
-not implement yet:
-
 updating programmes
 
+
+discarded idea:
+
 --killing guis launched by programmes being updating (to automate, this programme is later updated in manual mode) (will not be implemented because killing gui means winget packet manager can no longer access uninstaller as programmes use same id (this include the custom version filter (that part doesn't work on every programme and starts deleting latest one)))
-
-
-
